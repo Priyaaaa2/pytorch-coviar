@@ -26,13 +26,13 @@ def main():
             with np.load(args.res) as residual:
                 n = len(mv['names'])
 
-                i_score = np.array([score[0][0] for score in iframe['scores']])
-                mv_score = np.array([score[0][0] for score in mv['scores']])
-                res_score = np.array([score[0][0] for score in residual['scores']])
+                i_score = np.array([score[0] for score in iframe['scores']])
+                mv_score = np.array([score[0] for score in mv['scores']])
+                res_score = np.array([score[0] for score in residual['scores']])
 
-                i_label = np.array([score[1] for score in iframe['scores']])
-                mv_label = np.array([score[1] for score in mv['scores']])
-                res_label = np.array([score[1] for score in residual['scores']])
+                i_label = np.array(iframe['labels'])
+                mv_label = np.array(mv['labels'])
+                res_label = np.array(residual['labels'])
                 assert np.alltrue(i_label == mv_label) and np.alltrue(i_label == res_label)
 
                 combined_score = i_score * args.wi + mv_score * args.wm + res_score * args.wr
