@@ -1,1 +1,14 @@
+data/
+*.avi
+*.mp4
+*.pth.tar
+*.pkl
 logs/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+data_loader/build/
+data_loader/dist/
+data_loader/*.egg-info/
+data_loader/coviar.cpython-312-x86_64-linux-gnu.so
+data_loader/ffmpeg

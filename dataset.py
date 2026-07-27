@@ -139,7 +139,7 @@ class CoviarDataSet(data.Dataset):
 
             if img is None:
                 print('Error: loading video %s failed.' % video_path)
-                img = np.zeros((256, 256, 2)) if self._representation == 'mv' else np.zeros((256, 256, 3))
+                img = np.zeros((256, 256, 2), dtype=np.uint8) if self._representation == 'mv' else np.zeros((256, 256, 3), dtype=np.uint8)
             else:
                 if self._representation == 'mv':
                     img = clip_and_scale(img, 20)
@@ -148,28 +148,22 @@ class CoviarDataSet(data.Dataset):
                 elif self._representation == 'residual':
                     img += 128
                     img = (np.minimum(np.maximum(img, 0), 255)).astype(np.uint8)
-
             if self._representation == 'iframe':
+                img = img.astype(np.uint8)
                 img = color_aug(img)
-
                 # BGR to RGB. (PyTorch uses RGB according to doc.)
                 img = img[..., ::-1]
-
             frames.append(img)
-
         frames = self._transform(frames)
-
         frames = np.array(frames)
         frames = np.transpose(frames, (0, 3, 1, 2))
         input = torch.from_numpy(frames).float() / 255.0
-
         if self._representation == 'iframe':
             input = (input - self._input_mean) / self._input_std
         elif self._representation == 'residual':
             input = (input - 0.5) / self._input_std
         elif self._representation == 'mv':
             input = (input - 0.5)
-
         return input, label
 
     def __len__(self):
