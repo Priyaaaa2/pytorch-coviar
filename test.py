@@ -129,7 +129,7 @@ def main():
 
         for i in range(len(output)):
             idx = order_dict[name_list[i]]
-            reorder_output[idx] = output[i]
+            reorder_output[idx] = output[i][0]
             reorder_label[idx] = video_labels[i]
             reorder_name[idx] = name_list[i]
 
