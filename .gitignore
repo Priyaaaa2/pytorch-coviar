@@ -3,6 +3,8 @@ data/
 *.mp4
 *.pth.tar
 *.pkl
+*.pkl.npz
+*.npz
 logs/
 __pycache__/
 *.pyc
