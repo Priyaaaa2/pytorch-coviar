@@ -33,7 +33,7 @@ Initializing model:
     def _prepare_tsn(self, num_class):
 
         feature_dim = getattr(self.base_model, 'fc').in_features
-        setattr(self.base_model, 'fc', nn.Linear(feature_dim, num_class))
+        setattr(self.base_model, 'fc', nn.Sequential(nn.Dropout(p=0.5), nn.Linear(feature_dim, num_class)))
 
         if self._representation == 'mv':
             setattr(self.base_model, 'conv1',
