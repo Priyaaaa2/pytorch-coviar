@@ -47,3 +47,5 @@ parser.add_argument('--model-prefix', type=str, default="model",
                     help="prefix of model name.")
 parser.add_argument('--gpus', nargs='+', type=int, default=None,
                     help='gpu ids.')
+parser.add_argument('--resume', default='', type=str,
+                    help='path to checkpoint to resume from')
