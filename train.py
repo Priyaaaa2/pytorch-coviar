@@ -1,5 +1,6 @@
 """Run training."""
 
+import os
 import shutil
 import time
 import numpy as np
@@ -15,7 +16,7 @@ from train_options import parser
 from transforms import GroupCenterCrop
 from transforms import GroupScale
 
-SAVE_FREQ = 40
+SAVE_FREQ = 10
 PRINT_FREQ = 20
 best_prec1 = 0
 
@@ -96,7 +97,21 @@ def main():
         eps=0.001)
     criterion = torch.nn.CrossEntropyLoss().cuda()
 
-    for epoch in range(args.epochs):
+    start_epoch = 0
+    if args.resume:
+        if os.path.isfile(args.resume):
+            print("Loading checkpoint '{}'".format(args.resume))
+            checkpoint = torch.load(args.resume, map_location='cuda', weights_only=False)
+            start_epoch = checkpoint['epoch']
+            best_prec1 = checkpoint['best_prec1']
+            model.load_state_dict(checkpoint['state_dict'])
+            if 'optimizer' in checkpoint:
+                optimizer.load_state_dict(checkpoint['optimizer'])
+            print("Resumed from epoch {}, best_prec1 {}".format(start_epoch, best_prec1))
+        else:
+            print("No checkpoint found at '{}', starting fresh".format(args.resume))
+
+    for epoch in range(start_epoch, args.epochs):
         cur_lr = adjust_learning_rate(optimizer, epoch, args.lr_steps, args.lr_decay)
 
         train(train_loader, model, criterion, optimizer, epoch, cur_lr)
@@ -113,6 +128,7 @@ def main():
                         'arch': args.arch,
                         'state_dict': model.state_dict(),
                         'best_prec1': best_prec1,
+                        'optimizer': optimizer.state_dict(),
                     },
                     is_best,
                     filename='checkpoint.pth.tar')
