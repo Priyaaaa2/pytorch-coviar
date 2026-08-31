@@ -111,6 +111,7 @@ def main():
         else:
             print("No checkpoint found at '{}', starting fresh".format(args.resume))
 
+    epochs_without_improvement = 0
     for epoch in range(start_epoch, args.epochs):
         cur_lr = adjust_learning_rate(optimizer, epoch, args.lr_steps, args.lr_decay)
 
@@ -120,6 +121,10 @@ def main():
             prec1 = validate(val_loader, model, criterion)
 
             is_best = prec1 > best_prec1
+            if is_best:
+                epochs_without_improvement = 0
+            else:
+                epochs_without_improvement += args.eval_freq
             best_prec1 = max(prec1, best_prec1)
             if is_best or epoch % SAVE_FREQ == 0:
                 save_checkpoint(
@@ -132,6 +137,9 @@ def main():
                     },
                     is_best,
                     filename='checkpoint.pth.tar')
+            if args.patience > 0 and epochs_without_improvement >= args.patience:
+                print("Early stopping: no improvement for {} epochs".format(epochs_without_improvement))
+                break
 
 
 def train(train_loader, model, criterion, optimizer, epoch, cur_lr):

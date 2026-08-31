@@ -49,3 +49,5 @@ parser.add_argument('--gpus', nargs='+', type=int, default=None,
                     help='gpu ids.')
 parser.add_argument('--resume', default='', type=str,
                     help='path to checkpoint to resume from')
+parser.add_argument('--patience', default=0, type=int,
+                    help='early stopping patience in epochs, 0 to disable')
